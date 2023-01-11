@@ -2,13 +2,13 @@ use std::ops;
 
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub struct Vec3 {
-    x: f64,
-    y: f64,
-    z: f64,
+    pub x: f64,
+    pub y: f64,
+    pub z: f64,
 }
 
 impl Vec3 {
-    fn new(x: f64, y: f64, z: f64) -> Self {
+    pub fn new(x: f64, y: f64, z: f64) -> Self {
         Self { x, y, z }
     }
 }
@@ -40,6 +40,14 @@ impl ops::Neg for Vec3 {
             y: -self.y,
             z: -self.z,
         }
+    }
+}
+
+impl ops::Mul<Vec3> for f64 {
+    type Output = Vec3;
+
+    fn mul(self, rhs: Vec3) -> Vec3 {
+        Vec3::new(self * rhs.x, self * rhs.y, self * rhs.z)
     }
 }
 
@@ -99,5 +107,18 @@ mod tests {
         assert_eq!(v_neg.x, -v.x);
         assert_eq!(v_neg.y, -v.y);
         assert_eq!(v_neg.z, -v.z);
+    }
+
+    #[test]
+    fn f64_mul_vec3() {
+        let mut rng = rand::thread_rng();
+
+        let f = rng.gen::<f64>();
+        let v1 = Vec3::new(rng.gen(), rng.gen(), rng.gen());
+        let v2 = f * v1;
+
+        assert_eq!(v2.x, f * v1.x);
+        assert_eq!(v2.y, f * v1.y);
+        assert_eq!(v2.z, f * v1.z);
     }
 }

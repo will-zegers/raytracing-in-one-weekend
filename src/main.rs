@@ -1,7 +1,11 @@
 use std::fmt::Write;
 use std::fs;
 
+mod color;
+use crate::color::get_pixel_color;
+mod ray;
 mod vec3;
+use crate::vec3::Vec3;
 
 fn main() {
     // Image
@@ -15,15 +19,14 @@ fn main() {
     for j in (0..IMAGE_HEIGHT).rev() {
         print!("\rScanlines remaining: {}", j);
         for i in 0..IMAGE_WIDTH {
-            let r = (i as f64) / ((IMAGE_WIDTH as f64) - 1.);
-            let g = (j as f64) / ((IMAGE_HEIGHT as f64) - 1.);
-            let b = 0.25;
+            let pixel = Vec3::new(
+                (i as f64) / ((IMAGE_WIDTH as f64) - 1.),
+                (j as f64) / ((IMAGE_HEIGHT as f64) - 1.),
+                0.25,
+            );
 
-            let ir = (255.999 * r) as u32;
-            let ig = (255.999 * g) as u32;
-            let ib = (255.999 * b) as u32;
-
-            write!(image, "{} {} {}\n", ir, ig, ib).unwrap();
+            let pixel_color = get_pixel_color(pixel);
+            write!(image, "{pixel_color}").unwrap();
         }
     }
 

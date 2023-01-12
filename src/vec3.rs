@@ -12,7 +12,7 @@ impl Vec3 {
         Self { x, y, z }
     }
 
-    pub fn as_unit_vector(self) -> Self {
+    pub fn unit_vector(self) -> Self {
         self / self.length()
     }
 
@@ -176,6 +176,16 @@ mod tests {
 
         let expected = ((x * x) + (y * y) + (z * z)).sqrt();
         assert_eq!(v.length(), expected);
+    }
+
+    #[test]
+    fn unit_vector() {
+        let mut rng = rand::thread_rng();
+
+        let v = Vec3::new(rng.gen(), rng.gen(), rng.gen());
+        let u = v.unit_vector();
+
+        assert!((u.length() - 1.0).abs() < EPSILON);
     }
 
     #[test]

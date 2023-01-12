@@ -11,6 +11,14 @@ impl Vec3 {
     pub fn new(x: f64, y: f64, z: f64) -> Self {
         Self { x, y, z }
     }
+
+    pub fn as_unit_vector(self) -> Self {
+        self / self.length()
+    }
+
+    pub fn length(&self) -> f64 {
+        ((self.x * self.x) + (self.y * self.y) + (self.z * self.z)).sqrt()
+    }
 }
 
 impl ops::Add<Vec3> for Vec3 {
@@ -31,6 +39,14 @@ impl ops::AddAssign for Vec3 {
     }
 }
 
+impl ops::Div<f64> for Vec3 {
+    type Output = Self;
+
+    fn div(self, t: f64) -> Self {
+        (1.0 / t) * self
+    }
+}
+
 impl ops::Neg for Vec3 {
     type Output = Self;
 
@@ -39,6 +55,18 @@ impl ops::Neg for Vec3 {
             x: -self.x,
             y: -self.y,
             z: -self.z,
+        }
+    }
+}
+
+impl ops::Sub<Vec3> for Vec3 {
+    type Output = Self;
+
+    fn sub(self, rhs: Self) -> Self::Output {
+        Self::Output {
+            x: self.x - rhs.x,
+            y: self.y - rhs.y,
+            z: self.z - rhs.z,
         }
     }
 }
@@ -55,6 +83,8 @@ impl ops::Mul<Vec3> for f64 {
 mod tests {
     use super::*;
     use rand::prelude::*;
+
+    const EPSILON: f64 = 1e-12;
 
     #[test]
     fn new() {
@@ -113,12 +143,51 @@ mod tests {
     fn f64_mul_vec3() {
         let mut rng = rand::thread_rng();
 
-        let f = rng.gen::<f64>();
+        let t = rng.gen::<f64>();
         let v1 = Vec3::new(rng.gen(), rng.gen(), rng.gen());
-        let v2 = f * v1;
+        let v2 = t * v1;
 
-        assert_eq!(v2.x, f * v1.x);
-        assert_eq!(v2.y, f * v1.y);
-        assert_eq!(v2.z, f * v1.z);
+        assert_eq!(v2.x, t * v1.x);
+        assert_eq!(v2.y, t * v1.y);
+        assert_eq!(v2.z, t * v1.z);
+    }
+
+    #[test]
+    fn vec3_div_f64() {
+        let mut rng = rand::thread_rng();
+
+        let t = rng.gen::<f64>();
+        let v1 = Vec3::new(rng.gen(), rng.gen(), rng.gen());
+        let v2 = v1 / t;
+
+        assert!((v2.x - v1.x / t).abs() < 1000.0 * std::f64::EPSILON);
+        assert!((v2.y - v1.y / t).abs() < 1000.0 * std::f64::EPSILON);
+        assert!((v2.z - v1.z / t).abs() < 1000.0 * std::f64::EPSILON);
+    }
+
+    #[test]
+    fn length() {
+        let mut rng = rand::thread_rng();
+
+        let x = rng.gen();
+        let y = rng.gen();
+        let z = rng.gen();
+        let v = Vec3::new(x, y, z);
+
+        let expected = ((x * x) + (y * y) + (z * z)).sqrt();
+        assert_eq!(v.length(), expected);
+    }
+
+    #[test]
+    fn sub() {
+        let mut rng = rand::thread_rng();
+
+        let v1 = Vec3::new(rng.gen(), rng.gen(), rng.gen());
+        let v2 = Vec3::new(rng.gen(), rng.gen(), rng.gen());
+        let v3 = v1 - v2;
+
+        assert_eq!(v3.x, v1.x - v2.x);
+        assert_eq!(v3.y, v1.y - v2.y);
+        assert_eq!(v3.z, v1.z - v2.z);
     }
 }

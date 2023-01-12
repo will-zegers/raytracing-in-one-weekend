@@ -19,6 +19,10 @@ impl Vec3 {
     pub fn length(&self) -> f64 {
         ((self.x * self.x) + (self.y * self.y) + (self.z * self.z)).sqrt()
     }
+
+    pub fn dot(&self, other: Vec3) -> f64 {
+        (self.x * other.x) + (self.y * other.y) + (self.z * other.z)
+    }
 }
 
 impl ops::Add<Vec3> for Vec3 {
@@ -199,5 +203,27 @@ mod tests {
         assert_eq!(v3.x, v1.x - v2.x);
         assert_eq!(v3.y, v1.y - v2.y);
         assert_eq!(v3.z, v1.z - v2.z);
+    }
+
+    #[test]
+    fn dot(){
+        let mut rng = rand::thread_rng();
+
+        let x1 = rng.gen();
+        let y1 = rng.gen();
+        let z1 = rng.gen();
+        let v1 = Vec3::new(x1, y1, z1);
+
+        let x2 = rng.gen();
+        let y2 = rng.gen();
+        let z2 = rng.gen();
+        let v2 = Vec3::new(x2, y2, z2);
+
+        let dot_product1 = v1.dot(v2);
+        let expected = (x1 * x2) + (y1 * y2) + (z1 * z2);
+        assert_eq!(dot_product1, expected);
+
+        let dot_product2 = v2.dot(v1);
+        assert_eq!(dot_product1, dot_product2);
     }
 }

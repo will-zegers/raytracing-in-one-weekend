@@ -6,12 +6,25 @@ use crate::color::get_pixel_color;
 mod ray;
 use crate::ray::Ray;
 mod vec3;
-use crate::vec3::Vec3;
+use crate::vec3::{Color, Point, Vec3};
 
-fn ray_color(r: &Ray) -> Vec3 {
+fn ray_color(r: Ray) -> Vec3 {
+    if hit_sphere(Point::new(0.0, 0.0, -1.0), 0.5, r) {
+        return Color::new(1.0, 0.0, 0.0)
+    }
     let unit_direction = r.direction.unit_vector();
     let t = 0.5 * (unit_direction.y + 1.0);
-    (1.0 - t) * Vec3::new(1.0, 1.0, 1.0) + t * Vec3::new(0.5, 0.7, 1.0)
+    (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
+}
+
+fn hit_sphere(center: Point, radius: f64, r: Ray) -> bool {
+    let oc = r.origin - center;
+    let a = r.direction.dot(r.direction);
+    let b = 2.0 * oc.dot(r.direction);
+    let c = oc.dot(oc) - (radius * radius);
+
+    let discriminant = (b * b) - (4.0 * a * c);
+    discriminant > 0.0
 }
 
 fn main() {
@@ -26,7 +39,7 @@ fn main() {
     const VIEWPORT_WIDTH: f64 = ASPECT_RATIO * VIEWPORT_HEIGHT;
     const FOCAL_LENGTH: f64 = 1.0;
 
-    let origin: Vec3 = Vec3::new(0.0, 0.0, 0.0);
+    let origin: Point = Point::new(0.0, 0.0, 0.0);
     let horizontal: Vec3 = Vec3::new(VIEWPORT_WIDTH, 0.0, 0.0);
     let vertical: Vec3 = Vec3::new(0.0, VIEWPORT_HEIGHT, 0.0);
     let lower_left_corner: Vec3 =
@@ -43,7 +56,7 @@ fn main() {
 
             let direction = lower_left_corner + (u * horizontal) + (v * vertical) - origin;
             let r = Ray::new(origin, direction);
-            let pixel_color = get_pixel_color(ray_color(&r));
+            let pixel_color = get_pixel_color(ray_color(r));
 
             write!(image, "{pixel_color}").unwrap();
         }

@@ -5,9 +5,9 @@ const MAX_COLOR: f64 = 256.0 - std::f64::EPSILON;
 pub fn get_pixel_color(pixel: Vec3) -> String {
     format!(
         "{} {} {}\n",
-        (MAX_COLOR * pixel.x) as i32,
-        (MAX_COLOR * pixel.y) as i32,
-        (MAX_COLOR * pixel.z) as i32,
+        (MAX_COLOR * pixel.x) as u8,
+        (MAX_COLOR * pixel.y) as u8,
+        (MAX_COLOR * pixel.z) as u8,
     )
 }
 

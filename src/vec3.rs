@@ -84,7 +84,7 @@ mod tests {
     use super::*;
     use rand::prelude::*;
 
-    const EPSILON: f64 = 1e-12;
+    const EPSILON: f64 = 1000.0 * std::f64::EPSILON;
 
     #[test]
     fn new() {
@@ -160,9 +160,9 @@ mod tests {
         let v1 = Vec3::new(rng.gen(), rng.gen(), rng.gen());
         let v2 = v1 / t;
 
-        assert!((v2.x - v1.x / t).abs() < 1000.0 * std::f64::EPSILON);
-        assert!((v2.y - v1.y / t).abs() < 1000.0 * std::f64::EPSILON);
-        assert!((v2.z - v1.z / t).abs() < 1000.0 * std::f64::EPSILON);
+        assert!((v2.x - v1.x / t).abs() < EPSILON);
+        assert!((v2.y - v1.y / t).abs() < EPSILON);
+        assert!((v2.z - v1.z / t).abs() < EPSILON);
     }
 
     #[test]

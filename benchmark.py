@@ -1,18 +1,22 @@
 import subprocess
 import time
 
+import numpy
+
 TRIALS = 100
 PATH = "./target/release/raytracing-in-one-weekend"
 
 def main():
-    average_time = 0
+    times = numpy.zeros((TRIALS))
     with open("/dev/null", "w") as dev_null:
-        for _ in range(TRIALS):
+        for i in range(TRIALS):
             start = time.time();
             subprocess.call(PATH, stdout=dev_null)
-            average_time += (time.time() - start) / TRIALS
+            times[i] = time.time() - start
 
-    print(f"Average time taken for {TRIALS} runs: {average_time}")
+    average_time = times.mean()
+    stddev = times.std()
+    print(f"Average time taken for {TRIALS} runs: {average_time:.5f} ± {stddev:.5f}s")
 
 
 if __name__ == '__main__':

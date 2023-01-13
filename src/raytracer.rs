@@ -1,11 +1,11 @@
 use std::fmt::Write;
-use std::fs;
 
+use crate::camera::Camera;
 use crate::color::get_pixel_color;
-use crate::config::*;
+use crate::config::{IMAGE_HEIGHT, IMAGE_WIDTH};
 use crate::hittable::{HitRecord, Hittable};
 use crate::ray::Ray;
-use crate::vec3::{Color, Point3, Vec3};
+use crate::vec3::{Color, Vec3};
 
 fn ray_color(r: &Ray, world: &dyn Hittable) -> Vec3 {
     let mut hit_record = HitRecord::new();
@@ -21,12 +21,8 @@ fn ray_color(r: &Ray, world: &dyn Hittable) -> Vec3 {
 pub struct Raytracer {}
 
 impl Raytracer {
-    pub fn run(world: &dyn Hittable) {
-        let origin: Point3 = Point3::new(0.0, 0.0, 0.0);
-        let horizontal: Vec3 = Vec3::new(VIEWPORT_WIDTH, 0.0, 0.0);
-        let vertical: Vec3 = Vec3::new(0.0, VIEWPORT_HEIGHT, 0.0);
-        let lower_left_corner: Vec3 =
-            origin - (horizontal / 2.0) - (vertical / 2.0) - Vec3::new(0.0, 0.0, FOCAL_LENGTH);
+    pub fn run(world: &dyn Hittable) -> String {
+        let camera = Camera::new();
 
         // Render
         let mut image = format!("P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT);
@@ -37,8 +33,7 @@ impl Raytracer {
                 let u = (i as f64) / ((IMAGE_WIDTH - 1) as f64);
                 let v = (j as f64) / ((IMAGE_HEIGHT - 1) as f64);
 
-                let direction = lower_left_corner + (u * horizontal) + (v * vertical) - origin;
-                let r = Ray::new(origin, direction);
+                let r = camera.get_ray(u, v);
                 let ray_color = ray_color(&r, world);
                 let pixel_color = get_pixel_color(ray_color);
 
@@ -46,6 +41,6 @@ impl Raytracer {
             }
         }
 
-        fs::write(OUTPUT_FILE, image).expect("Unable to write file.");
+        image
     }
 }

@@ -9,22 +9,30 @@ mod vec3;
 use crate::vec3::{Color, Point, Vec3};
 
 fn ray_color(r: Ray) -> Vec3 {
-    if hit_sphere(Point::new(0.0, 0.0, -1.0), 0.5, r) {
-        return Color::new(1.0, 0.0, 0.0)
+    let center = Point::new(0.0, 0.0, -1.0);
+    let t = hit_sphere(center, 0.5, r);
+    if t > 0.0 {
+        let n = (r.at(t) - center).unit_vector();
+        return 0.5 * Color::new(n.x + 1.0, n.y + 1.0, n.z + 1.0);
     }
+
     let unit_direction = r.direction.unit_vector();
     let t = 0.5 * (unit_direction.y + 1.0);
     (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
 }
 
-fn hit_sphere(center: Point, radius: f64, r: Ray) -> bool {
+fn hit_sphere(center: Point, radius: f64, r: Ray) -> f64 {
     let oc = r.origin - center;
     let a = r.direction.dot(r.direction);
     let b = 2.0 * oc.dot(r.direction);
     let c = oc.dot(oc) - (radius * radius);
 
     let discriminant = (b * b) - (4.0 * a * c);
-    discriminant > 0.0
+    return if discriminant < 0.0 {
+        -1.0
+    } else {
+        (-b - discriminant.sqrt()) / (2.0 * a)
+    }
 }
 
 fn main() {

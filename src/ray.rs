@@ -11,7 +11,6 @@ impl Ray {
         Self { origin, direction }
     }
 
-    #[allow(dead_code)]
     #[inline]
     pub fn at(&self, t: f64) -> Vec3 {
         self.origin + t * self.direction

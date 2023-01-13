@@ -1,4 +1,5 @@
 mod color;
+mod hittable;
 mod ray;
 mod raytracer;
 mod vec3;

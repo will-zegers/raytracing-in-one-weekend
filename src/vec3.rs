@@ -21,7 +21,7 @@ impl Vec3 {
     }
 
     #[inline]
-    pub fn length_squared(&self) -> f64{
+    pub fn length_squared(&self) -> f64 {
         (self.x * self.x) + (self.y * self.y) + (self.z * self.z)
     }
 
@@ -217,7 +217,7 @@ mod tests {
     }
 
     #[test]
-    fn dot(){
+    fn dot() {
         let mut rng = rand::thread_rng();
 
         let x1 = rng.gen();

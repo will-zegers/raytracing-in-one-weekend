@@ -3,10 +3,10 @@ use std::fs;
 
 use crate::color::get_pixel_color;
 use crate::ray::Ray;
-use crate::vec3::{Color, Point, Vec3};
+use crate::vec3::{Color, Point3, Vec3};
 
 fn ray_color(r: Ray) -> Vec3 {
-    let center = Point::new(0.0, 0.0, -1.0);
+    let center = Point3::new(0.0, 0.0, -1.0);
     let t = hit_sphere(center, 0.5, r);
     if t > 0.0 {
         let n = (r.at(t) - center).unit_vector();
@@ -18,7 +18,7 @@ fn ray_color(r: Ray) -> Vec3 {
     (1.0 - t) * Color::new(1.0, 1.0, 1.0) + t * Color::new(0.5, 0.7, 1.0)
 }
 
-fn hit_sphere(center: Point, radius: f64, r: Ray) -> f64 {
+fn hit_sphere(center: Point3, radius: f64, r: Ray) -> f64 {
     let oc = r.origin - center;
     let a = r.direction.length_squared();
     let half_b = oc.dot(r.direction);
@@ -47,7 +47,7 @@ impl Raytracer {
         const VIEWPORT_WIDTH: f64 = ASPECT_RATIO * VIEWPORT_HEIGHT;
         const FOCAL_LENGTH: f64 = 1.0;
 
-        let origin: Point = Point::new(0.0, 0.0, 0.0);
+        let origin: Point3 = Point3::new(0.0, 0.0, 0.0);
         let horizontal: Vec3 = Vec3::new(VIEWPORT_WIDTH, 0.0, 0.0);
         let vertical: Vec3 = Vec3::new(0.0, VIEWPORT_HEIGHT, 0.0);
         let lower_left_corner: Vec3 =

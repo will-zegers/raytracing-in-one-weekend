@@ -32,7 +32,7 @@ impl Raytracer {
         let mut image = format!("P3\n{} {}\n255\n", IMAGE_WIDTH, IMAGE_HEIGHT);
 
         for j in (0..IMAGE_HEIGHT).rev() {
-            print!("\rScanlines remaining: {}", j);
+            print!("\rScanlines remaining: {}   ", j);
             for i in 0..IMAGE_WIDTH {
                 let mut color = Color::new(0.0, 0.0, 0.0);
                 for _ in 0..SAMPLES_PER_PIXEL {

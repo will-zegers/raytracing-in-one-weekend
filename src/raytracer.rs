@@ -1,4 +1,5 @@
 use std::fmt::Write;
+use std::sync::Mutex;
 
 use rand::prelude::*;
 
@@ -34,15 +35,19 @@ impl Raytracer {
         for j in (0..IMAGE_HEIGHT).rev() {
             print!("\rScanlines remaining: {}   ", j);
             for i in 0..IMAGE_WIDTH {
-                let mut color = Color::new(0.0, 0.0, 0.0);
+                let m = Mutex::new(Color::new(0.0, 0.0, 0.0));
                 for _ in 0..SAMPLES_PER_PIXEL {
+
                     let u = ((i as f64) + rng.gen::<f64>()) / ((IMAGE_WIDTH - 1) as f64);
                     let v = ((j as f64) + rng.gen::<f64>()) / ((IMAGE_HEIGHT - 1) as f64);
 
                     let r = camera.get_ray(u, v);
-                    color += ray_color(&r, world);
+                    let mut color = m.lock().unwrap();
+                    *color += ray_color(&r, world);
                 }
-                let pixel_color = get_pixel_color(color, SAMPLES_PER_PIXEL);
+
+                let color = m.lock().unwrap();
+                let pixel_color = get_pixel_color(*color, SAMPLES_PER_PIXEL);
 
                 write!(image, "{pixel_color}").unwrap();
             }
